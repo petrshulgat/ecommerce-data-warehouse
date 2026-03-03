@@ -37,3 +37,12 @@ create table warehouse.fact_orders(
     foreign key (product_key) REFERENCES warehouse.dim_product(product_key),
     foreign key (date_key) REFERENCES warehouse.dim_date(date_key)
 );
+
+ALTER TABLE warehouse.dim_customer
+ADD CONSTRAINT uq_customer_id UNIQUE (customer_id);
+
+ALTER TABLE warehouse.dim_product
+ADD CONSTRAINT uq_product_id UNIQUE (product_id);
+
+ALTER TABLE warehouse.dim_date
+ADD CONSTRAINT uq_date_key UNIQUE (date_key);
