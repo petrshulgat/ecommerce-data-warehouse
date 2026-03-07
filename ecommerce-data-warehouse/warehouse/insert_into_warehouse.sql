@@ -38,3 +38,13 @@ SELECT DISTINCT
     EXTRACT(DAY FROM order_date::date)::int
 FROM staging.orders
 ON CONFLICT (date_key) DO NOTHING;
+
+create index indx_fact_customer
+on warehouse.fact_orders(customer_key);
+
+create index indx_fact_product
+on warehouse.fact_orders(product_key);
+
+create index indx_fact_date
+on warehouse.fact_orders(date_key);
+
