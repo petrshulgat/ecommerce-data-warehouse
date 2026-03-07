@@ -18,3 +18,23 @@ select
 from staging.orders
 group by order_date
 on conflict (date_key) do nothing;
+
+
+insert into warehouse.fact_orders(
+    order_id, customer_key, product_key, date_key, quantity, total_amount)
+select o.order_id, wc.customer_key, wp.product_key, to_char(o.order_date::date, 'yyyymmdd')::int as date_key,
+ o.quantity, o.quantity * wp.price as total_amount 
+from staging.orders o join warehouse.dim_customer wc on o.customer_id = wc.customer_id 
+join warehouse.dim_product as wp on o.product_id = wp.product_id
+on conflict do nothing;
+
+
+INSERT INTO warehouse.dim_date (date_key, full_date, year, month, day)
+SELECT DISTINCT
+    TO_CHAR(order_date::date,'YYYYMMDD')::int AS date_key,
+    order_date::date,
+    EXTRACT(YEAR FROM order_date::date)::int,
+    EXTRACT(MONTH FROM order_date::date)::int,
+    EXTRACT(DAY FROM order_date::date)::int
+FROM staging.orders
+ON CONFLICT (date_key) DO NOTHING;
